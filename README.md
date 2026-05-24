@@ -36,7 +36,7 @@ This lab covers end-to-end Active Directory account management within the `globo
 
 ---
 
-## 🧪 Methodology / Walkthrough
+## 🧪 Walkthrough
 
 ### Objective 1 — Manage Windows Users Using GUI Tools
 
@@ -51,15 +51,7 @@ Start → Windows Administrative Tools → Active Directory Users and Computers
 ---
 
 #### Step 2 — Create an Organizational Unit
-
 In the left-hand pane, right-click the `globomantics.co` domain and select **New → Organizational Unit**.
-
-```
-Name: Globomantics
-Protect container from accidental deletion: Unchecked
-```
-
-> **Note:** Unchecking accidental deletion protection is acceptable in lab environments. In production, leave this enabled to prevent unintended OU removal.
 
 ---
 
@@ -103,11 +95,6 @@ Double-click the **AllUsers** group → **Members tab → Add...**
 
 In the object name field, enter `M.Ortega` and click **Check Names**. The name resolves to:
 
-```
-Marina Ortega (M.Ortega@globomantics.co)
-```
-
-Click **OK** to confirm. Verify Marina Ortega is listed as a member, then click **OK** to close the group properties.
 
 ---
 
@@ -127,7 +114,7 @@ Run the following command to generate a report of all user accounts in the domai
 Get-ADUser -Filter * | Select-Object samAccountName, givenName, surname
 ```
 
-This returns a list of all AD users including their logon names and display names — a quick way to inventory domain accounts or spot unauthorized users.
+This returns a list of all AD users, including their logon names and display names, a quick way to inventory domain accounts or spot unauthorized users.
 
 ---
 
@@ -145,8 +132,6 @@ New-ADUser -Name 'Casey McCann' `
   -PasswordNeverExpires $true `
   -Enabled $True
 ```
-
-When prompted for **Input User Password**, enter `Password1` and press **Enter**.
 
 **Command parameter breakdown:**
 
@@ -168,26 +153,18 @@ When prompted for **Input User Password**, enter `Password1` and press **Enter**
 Set-ADUser C.McCann -ChangePasswordAtLogon $false
 ```
 
-This ensures the account can be used immediately in the next objective without requiring an interactive password change at first logon.
-
----
-
 #### Step 5 — Add User to the NetAdmins Group
 
 ```powershell
 Add-ADGroupMember NetAdmins -Members C.McCann
 ```
 
-This adds Casey McCann to the `NetAdmins` group, which will be delegated domain join permissions in Objective 3.
-
 ---
 
 ### Objective 3 — Perform Domain Join and Unjoin
 
 #### Step 1 — Unjoin the File Server from the Domain
-
-Open the **File Server** from the Connections screen. Navigate to:
-
+From the File server
 ```
 Start → Server Manager → Local Server → Domain field (globomantics.co) → Change...
 ```
@@ -197,8 +174,7 @@ In the **Computer Name/Domain Changes** window, select **Workgroup** and enter:
 ```
 WORKGROUP
 ```
-
-Click **OK** through the confirmation prompts. When the **Welcome to the WORKGROUP workgroup** message appears, click **OK** and restart the server when prompted. After the restart, the File Server is no longer a domain member.
+Agree to all the confirmation prompts. Once completed, the server will need to be restarted. Upon restart, the file server will no longer be part of the domain.
 
 ---
 
@@ -244,12 +220,8 @@ Select **Domain** and enter:
 globomantics.co
 ```
 
-Click **OK**. When prompted for credentials, enter:
+Click **OK**. When prompted for credentials
 
-```
-Username: globomantics.co\c.mccann
-Password: Password1
-```
 
 The **Welcome to the globomantics.co domain** confirmation message confirms the join succeeded using the non-admin `C.McCann` account — validating the delegation configured in the previous step.
 
@@ -257,7 +229,7 @@ Click **OK**, then **Restart Now** to complete the domain join.
 
 ---
 
-## 🔍 Findings / Results
+## 🔍 Results
 
 - Organizational Unit `Globomantics` created under `globomantics.co` with accidental deletion protection disabled for lab flexibility
 - Security groups `NetAdmins` and `AllUsers` created within the Globomantics OU
@@ -290,11 +262,11 @@ Click **OK**, then **Restart Now** to complete the domain join.
 
 **Organizational Units as an Access Control Boundary**
 
-OUs are not just an organizational convenience — they define the scope of Group Policy application and delegation. Creating a dedicated OU for domain objects (like `Globomantics`) allows administrators to apply targeted GPOs and delegate management without granting broad domain-level permissions. Poor OU design leads to either overly broad policy application or excessive admin access.
+OUs are not just an organizational convenience; they define the scope of Group Policy application and delegation. Creating a dedicated OU for domain objects allows administrators to apply targeted GPOs and delegate management without granting broad domain-level permissions. Poor OU design leads to either overly broad policy application or excessive admin access.
 
 **Delegation of Control vs. Domain Admin Sprawl**
 
-One of the most common misconfigurations in enterprise AD environments is granting Domain Admin rights to users who only need a subset of that access. This lab demonstrates a key alternative: using the Delegation of Control Wizard to grant `NetAdmins` members only the permission needed to join and remove computer objects — nothing more. This directly reduces the blast radius of a compromised account.
+One of the most common misconfigurations in enterprise AD environments is granting Domain Admin rights to users who only need a subset of that access. This lab demonstrates a key alternative: using the Delegation of Control Wizard to grant `NetAdmins` members only the permission needed to join and remove computer objects, nothing more. 
 
 **PowerShell for Repeatable, Auditable Provisioning**
 
@@ -302,11 +274,8 @@ Manual GUI-based account creation is error-prone at scale. PowerShell cmdlets li
 
 **Stale Computer Objects as a Security Risk**
 
-After unjoining FS01 from the domain, its computer object remained in AD until manually deleted. Stale computer objects are common in environments without automated lifecycle management and can be leveraged by attackers to pass-the-hash or perform relay attacks against accounts that previously authenticated on that machine. Regular auditing of the Computers container is a recommended hygiene practice.
+After unjoining FS01 from the domain, its computer object remained in AD until manually deleted. Stale computer objects are common in environments without automated lifecycle management and can be leveraged by attackers to pass-the-hash or perform relay attacks against accounts that previously authenticated on that machine. Regular auditing of the computer container is a recommended hygiene practice.
 
-**Non-Admin Domain Join as Least Privilege in Practice**
-
-The final objective demonstrates least privilege applied to a concrete administrative workflow: a standard user (`C.McCann`) in the `NetAdmins` group can join a machine to the domain without any Domain Admin credentials being used or exposed. This is the model enterprises should follow for IT helpdesk and junior sysadmin roles.
 
 ---
 
@@ -315,10 +284,10 @@ The final objective demonstrates least privilege applied to a concrete administr
 | Technique ID | Technique Name | Relevance |
 |-------------|---------------|-----------|
 | T1136.002 | Create Account: Domain Account | Lab covers domain user creation via ADUC and PowerShell; Event ID 4720 provides detection visibility |
-| T1078.002 | Valid Accounts: Domain Accounts | Demonstrates how delegated non-admin accounts can perform privileged actions (domain join) — a common attacker pivot path if such accounts are compromised |
+| T1078.002 | Valid Accounts: Domain Accounts | Demonstrates how delegated non-admin accounts can perform privileged actions (domain join), a common attacker pivot path if such accounts are compromised |
 | T1087.002 | Account Discovery: Domain Account | `Get-ADUser -Filter *` mirrors the enumeration technique used by attackers to map domain users post-compromise |
-| T1098 | Account Manipulation | Adding users to security groups (`Add-ADGroupMember`) changes effective permissions — monitored via Event ID 4728 (member added to global security group) |
-| T1484.001 | Domain Policy Modification: Group Policy | Delegation of Control modifies AD object permissions — changes are auditable via Event ID 5136 (directory service object modified) |
+| T1098 | Account Manipulation | Adding users to security groups (`Add-ADGroupMember`) changes effective permissions, monitored via Event ID 4728 (member added to global security group) |
+| T1484.001 | Domain Policy Modification: Group Policy | Delegation of Control modifies AD object permissions, changes are auditable via Event ID 5136 (directory service object modified) |
 
 ---
 
