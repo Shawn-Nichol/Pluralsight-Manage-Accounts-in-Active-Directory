@@ -4,7 +4,17 @@
 
 ## 📘 Overview
 
-This lab covers end-to-end Active Directory account management within the `globomantics.co` domain using a live Windows Server domain controller. Across three objectives, the lab simulates real-world identity administration tasks: creating Organizational Units, user accounts, and security groups via the GUI; automating user provisioning and reporting with PowerShell 7; and delegating domain join permissions to a non-admin group, which is then used to join a file server to the domain. These tasks directly reflect the responsibilities of a systems administrator or identity-focused SOC analyst in an enterprise Windows environment.
+This repository documents my completion of a Pluralsight hands-on lab focused on managing a Windows Server Active Directory environment using both GUI administration tools and PowerShell automation.
+
+The lab simulated enterprise administrative tasks, including:
+
+- Creating and managing Organizational Units (OUs)
+- Managing users and groups in Active Directory
+- Automating account management with PowerShell
+- Delegating permissions for domain joins
+- Joining and removing systems from an Active Directory domain
+
+The exercises reinforced foundational Windows administration and identity management concepts commonly used in enterprise IT and cybersecurity operations.
 
 
 ![Platform](https://img.shields.io/badge/platform-Pluralsight-39ff7a?style=flat-square)
@@ -13,13 +23,13 @@ This lab covers end-to-end Active Directory account management within the `globo
 ---
 
 ## 🎯 Objectives
-
-- Create an Organizational Unit (OU) and security groups within an existing AD domain using ADUC
-- Create and move user accounts between containers and OUs
-- Manage group membership by adding users to security groups via the GUI
-- Use PowerShell to enumerate domain users and automate account creation
-- Delegate domain join permissions to a security group using the Delegation of Control Wizard
-- Remove a server from the domain (unjoin) and rejoin it using a non-Domain Admin account
+- Manage Active Directory users and groups using GUI tools
+- Create Organizational Units(OU) and security groups
+- Use PowerShell cmdlets to automate account creation
+- Delegate domain join permissions to non-administrative users.
+- Remove and rejoin systems to an Active Directory domain
+- Validate domain authentication and delegation functionality
+- Document administrative processes and outcomes
 
 ---
 
@@ -35,6 +45,17 @@ This lab covers end-to-end Active Directory account management within the `globo
 | Delegation of Control Wizard | Assigns scoped AD permissions to the group |
 
 ---
+
+## 🧠 Security Concepts Demonstrated
+Identity and Access Management (IAM)
+Active Directory Administration
+Least Privilege Delegation
+Role-Based Access Control
+Windows Domain Management
+PowerShell Automation
+Account Provisioning
+Privileged Group Management
+
 
 ## 🧪 Walkthrough
 
@@ -260,36 +281,52 @@ Click **OK**, then **Restart Now** to complete the domain join.
 
 ## 🛡️ Security Analysis / Key Takeaways
 
-**Organizational Units as an Access Control Boundary**
+**Organizational Structure (OUs)**  
+Active Directory environments rely on proper organizational structure and controlled administrative access. Organizational Units (OUs) provide a way to logically separate users, groups, and systems while also defining the scope for Group Policy application and delegated administration. Proper OU design reduces unnecessary exposure of privileges and improves administrative efficiency.
 
-OUs are not just an organizational convenience; they define the scope of Group Policy application and delegation. Creating a dedicated OU for domain objects allows administrators to apply targeted GPOs and delegate management without granting broad domain-level permissions. Poor OU design leads to either overly broad policy application or excessive admin access.
+**Delegation & Least Privilege**  
+Delegated permissions provide a more secure alternative to assigning broad Domain Admin rights. Limiting access to only required tasks, such as joining and removing systems from the domain, supports the principle of least privilege while maintaining operational efficiency.
 
-**Delegation of Control vs. Domain Admin Sprawl**
+**PowerShell Automation**  
+PowerShell improves consistency and reduces manual error through repeatable account provisioning workflows. Cmdlets such as `New-ADUser` and `Add-ADGroupMember` allow administrative tasks to be scripted, reviewed, and reused across environments.
 
-One of the most common misconfigurations in enterprise AD environments is granting Domain Admin rights to users who only need a subset of that access. This lab demonstrates a key alternative: using the Delegation of Control Wizard to grant `NetAdmins` members only the permission needed to join and remove computer objects, nothing more. 
-
-**PowerShell for Repeatable, Auditable Provisioning**
-
-Manual GUI-based account creation is error-prone at scale. PowerShell cmdlets like `New-ADUser` and `Add-ADGroupMember` enable repeatable, scriptable provisioning that can be peer-reviewed, version-controlled, and integrated into onboarding workflows. From a SOC perspective, scripted provisioning also makes deviations (unexpected account creation) more detectable against a baseline.
-
-**Stale Computer Objects as a Security Risk**
-
-After unjoining FS01 from the domain, its computer object remained in AD until manually deleted. Stale computer objects are common in environments without automated lifecycle management and can be leveraged by attackers to pass-the-hash or perform relay attacks against accounts that previously authenticated on that machine. Regular auditing of the computer container is a recommended hygiene practice.
+**Lifecycle & Cleanup**  
+Computer objects may remain in Active Directory after systems are removed from the domain, creating stale entries. Regular auditing and cleanup of unused objects is important for maintaining a secure and accurate directory environment.
 
 
 ---
 
 ## 🧠 MITRE ATT&CK Mapping
 
-| Technique ID | Technique Name | Relevance |
-|-------------|---------------|-----------|
-| T1136.002 | Create Account: Domain Account | Lab covers domain user creation via ADUC and PowerShell; Event ID 4720 provides detection visibility |
-| T1078.002 | Valid Accounts: Domain Accounts | Demonstrates how delegated non-admin accounts can perform privileged actions (domain join), a common attacker pivot path if such accounts are compromised |
-| T1087.002 | Account Discovery: Domain Account | `Get-ADUser -Filter *` mirrors the enumeration technique used by attackers to map domain users post-compromise |
-| T1098 | Account Manipulation | Adding users to security groups (`Add-ADGroupMember`) changes effective permissions, monitored via Event ID 4728 (member added to global security group) |
-| T1484.001 | Domain Policy Modification: Group Policy | Delegation of Control modifies AD object permissions, changes are auditable via Event ID 5136 (directory service object modified) |
+| ID | Tactic / Technique | How it Appears in This Lab |
+|---|---|---|
+| TA0001 | Initial Access | Domain authentication and access workflows |
+| TA0003 | Persistence | Active Directory account creation and management |
+| TA0004 | Privilege Escalation | Delegated administrative permissions |
+| TA0006 | Credential Access | User credential and password management |
+| TA0007 | Discovery | Enumeration of domain users using PowerShell |
 
 ---
+
+
+🛠️ Skills Gained
+Active Directory Administration
+Windows Server Management
+PowerShell Automation
+User and Group Management
+Domain Join Troubleshooting
+Role-Based Access Control
+Identity & Access Management
+Organizational Unit Design
+Delegated Administration
+
+💼 Resume Bullets
+Completed hands-on Active Directory administration lab using Windows Server and PowerShell
+Managed users, groups, Organizational Units, and delegated domain permissions
+Automated Active Directory account provisioning using PowerShell cmdlets
+Performed domain join and unjoin operations using delegated administrative access
+Documented enterprise-style Windows administration procedures and outcomes
+
 
 ## 📎 References
 
@@ -299,3 +336,10 @@ After unjoining FS01 from the domain, its computer object remained in AD until m
 - [Microsoft Docs — New-ADUser Cmdlet](https://learn.microsoft.com/en-us/powershell/module/activedirectory/new-aduser)
 - [MITRE ATT&CK — T1136.002 Create Account: Domain Account](https://attack.mitre.org/techniques/T1136/002/)
 - [MITRE ATT&CK — T1087.002 Account Discovery: Domain Account](https://attack.mitre.org/techniques/T1087/002/)
+
+👤 About Me
+
+I'm Shawn, an IT and cybersecurity student building hands-on technical experience through lab environments, home labs, and documented security projects.
+
+🌐 [GitHub](https://github.com/Shawn-Nichol)
+🔗 [Linkedin](https://www.linkedin.com/in/shawn-nichol/?skipRedirect=true)
