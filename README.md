@@ -3,34 +3,23 @@
   <img src="Lab%20cover%20photo.png" width="525"/>
 </p>
 
-## 📘 Overview
+## 📘 Overview / Objectives
 
-This repository documents my completion of a Pluralsight hands-on lab focused on managing a Windows Server Active Directory environment using both GUI administration tools and PowerShell automation.
+This project documents a hands-on Active Directory administration lab completed in a Windows Server environment using both graphical tools and PowerShell automation. The lab focused on simulating common enterprise identity and access management tasks, including user provisioning, group management, and delegated administration.
 
-The lab simulated enterprise administrative tasks, including:
+The primary objectives of this lab were to gain practical experience with Active Directory structure, automate administrative tasks using PowerShell, and apply the principle of least privilege through delegated control.
 
-- Creating and managing Organizational Units (OUs)
-- Managing users and groups in Active Directory
-- Automating account management with PowerShell
-- Delegating permissions for domain joins
-- Joining and removing systems from an Active Directory domain
-
-The exercises reinforced foundational Windows administration and identity management concepts commonly used in enterprise IT and cybersecurity operations.
-
+- Created and managed Organizational Units (OUs) to structure Active Directory environments
+- Administered user and group accounts using Active Directory tools and PowerShell
+- Automated account provisioning and group membership with PowerShell cmdlets
+- Implemented delegated administration using role-based access control and least privilege principles
+- Performed domain join and unjoin operations and validated authentication behavior
 
 ![Platform](https://img.shields.io/badge/platform-Pluralsight-39ff7a?style=flat-square)
 ![Status](https://img.shields.io/badge/status-complete-39ff7a?style=flat-square)
 ![Date](https://img.shields.io/badge/date-2026-05-23-blue?style=flat-square)
 ---
 
-## 🎯 Objectives
-- Manage Active Directory users and groups using GUI tools
-- Create Organizational Units(OU) and security groups
-- Use PowerShell cmdlets to automate account creation
-- Delegate domain join permissions to non-administrative users.
-- Remove and rejoin systems to an Active Directory domain
-- Validate domain authentication and delegation functionality
-- Document administrative processes and outcomes
 
 ---
 
@@ -47,281 +36,106 @@ The exercises reinforced foundational Windows administration and identity manage
 
 ---
 
+## 🚶 Walkthrough
+
+### ⚙️ 1. Active Directory Administration (GUI)
+- Created a new Organizational Unit (OU) to structure domain resources
+- Created security groups for role-based access control (NetAdmins, AllUsers)
+- Provisioned a new user account using Active Directory Users and Computers (ADUC)
+- Moved existing user objects into the newly created OU
+- Assigned users to security groups to enforce access control policies
+
+### 💻 2. Active Directory Automation (PowerShell)
+- Enumerated all domain users using Get-ADUser to validate directory visibility
+- Created a new user account using New-ADUser with secure password handling
+- Modified user properties using Set-ADUser to control authentication behavior
+- Added users to security groups using Add-ADGroupMember
+
+### 🔐 3. Domain Management & Delegation
+- Performed domain unjoin of a Windows Server to simulate machine removal
+- Cleaned up stale computer objects from Active Directory
+- Configured delegated permissions using the Delegation of Control Wizard
+- Granted scoped administrative rights for computer object management (least privilege model)
+- Successfully rejoined the server to the domain using delegated credentials
+
+
+---
+
 ## 🧠 Security Concepts Demonstrated
-Identity and Access Management (IAM)
-Active Directory Administration
-Least Privilege Delegation
-Role-Based Access Control
-Windows Domain Management
-PowerShell Automation
-Account Provisioning
-Privileged Group Management
 
-
-## 🧪 Walkthrough
-
-### Objective 1 — Manage Windows Users Using GUI Tools
-
-#### Step 1 — Open Active Directory Users and Computers
-
-From the Domain Controller desktop, navigate to:
-
-```
-Start → Windows Administrative Tools → Active Directory Users and Computers
-```
+- Identity and Access Management (IAM) within Active Directory environments  
+- Least privilege access control through delegated administration  
+- Role-Based Access Control (RBAC) using security groups and Organizational Unit (OU) structure  
+- Active Directory account lifecycle management (creation, modification, and removal)  
+- Privileged access governance and administrative boundary enforcement  
+- Secure authentication and domain-based identity validation  
 
 ---
 
-#### Step 2 — Create an Organizational Unit
-In the left-hand pane, right-click the `globomantics.co` domain and select **New → Organizational Unit**.
+## 🛠️ Skills Gained
 
----
-
-#### Step 3 — Create Security Groups
-
-Right-click the **Globomantics** OU and select **New → Group**. Create two groups:
-
-| Group Name | Group Scope | Group Type |
-|------------|-------------|------------|
-| `NetAdmins` | Global | Security |
-| `AllUsers` | Global | Security |
-
----
-
-#### Step 4 — Create a New User Account
-
-Right-click the **Globomantics** OU and select **New → User**. Complete the wizard with the following values:
-
-| Field | Value |
-|-------|-------|
-| First Name | Marina |
-| Last Name | Ortega |
-| User Logon Name | `M.Ortega` |
-| Password | `Password1` |
-| User must change password at next logon | Unchecked |
-| Password never expires | Checked |
-
----
-
-#### Step 5 — Move an Existing User to the Globomantics OU
-
-In the left-hand pane, click the **Users** container. In the right-hand pane, right-click the user `mcauthon` and select **Move...**. In the Move dialog, select the **Globomantics** OU and click **OK**.
-
-Click the **Globomantics** OU to confirm both `mcauthon` and `Marina Ortega` are now present.
-
----
-
-#### Step 6 — Add User to a Security Group
-
-Double-click the **AllUsers** group → **Members tab → Add...**
-
-In the object name field, enter `M.Ortega` and click **Check Names**. The name resolves to:
-
-
----
-
-### Objective 2 — Manage Windows Users Using PowerShell
-
-#### Step 1 — Launch PowerShell 7 as Administrator
-
-Run **PowerShell 7** as admin
-
----
-
-#### Step 2 — Enumerate All Domain Users
-
-Run the following command to generate a report of all user accounts in the domain:
-
-```powershell
-Get-ADUser -Filter * | Select-Object samAccountName, givenName, surname
-```
-
-This returns a list of all AD users, including their logon names and display names, a quick way to inventory domain accounts or spot unauthorized users.
-
----
-
-#### Step 3 — Create a New User Account via PowerShell
-
-Run the following command to create user **Casey McCann** in the Globomantics OU:
-
-```powershell
-New-ADUser -Name 'Casey McCann' `
-  -Path 'OU=Globomantics,DC=Globomantics,DC=co' `
-  -GivenName 'Casey' `
-  -Surname 'McCann' `
-  -SamAccountName 'C.McCann' `
-  -AccountPassword (Read-Host -AsSecureString "Input User Password") `
-  -PasswordNeverExpires $true `
-  -Enabled $True
-```
-
-**Command parameter breakdown:**
-
-| Parameter | Purpose |
-|-----------|---------|
-| `-Name` | Display name of the AD object |
-| `-Path` | Distinguished name of the target OU |
-| `-GivenName / -Surname` | First and last name attributes |
-| `-SamAccountName` | Pre-Windows 2000 logon name (used for authentication) |
-| `-AccountPassword` | Prompts securely at runtime — avoids plaintext in script |
-| `-PasswordNeverExpires $true` | Exempts account from domain password expiration policy |
-| `-Enabled $True` | Creates account in enabled state (default is disabled) |
-
----
-
-#### Step 4 — Disable Forced Password Change at Logon
-
-```powershell
-Set-ADUser C.McCann -ChangePasswordAtLogon $false
-```
-
-#### Step 5 — Add User to the NetAdmins Group
-
-```powershell
-Add-ADGroupMember NetAdmins -Members C.McCann
-```
-
----
-
-### Objective 3 — Perform Domain Join and Unjoin
-
-#### Step 1 — Unjoin the File Server from the Domain
-From the File server
-```
-Start → Server Manager → Local Server → Domain field (globomantics.co) → Change...
-```
-
-In the **Computer Name/Domain Changes** window, select **Workgroup** and enter:
-
-```
-WORKGROUP
-```
-Agree to all the confirmation prompts. Once completed, the server will need to be restarted. Upon restart, the file server will no longer be part of the domain.
-
----
-
-#### Step 2 — Delete the Stale Computer Object from AD
-
-Return to the **Active Directory Domain Controller** tab. In ADUC, navigate to `globomantics.co → Computers`. Right-click **FS01** and select **Delete**. Click **Yes** to confirm.
-
-> **Why this matters:** After a domain unjoin, the computer object remains in AD and should be removed to keep the directory clean and avoid authentication conflicts if the machine rejoins with a new SID.
-
----
-
-#### Step 3 — Delegate Domain Join Permissions to NetAdmins
-
-Right-click `globomantics.co` and select **Delegate Control...**
-
-Follow the Delegation of Control Wizard:
-
-| Wizard Step | Selection |
-|-------------|-----------|
-| Users or Groups | Add `NetAdmins` |
-| Tasks to Delegate | Create a custom task to delegate |
-| AD Object Type | Only the following objects: **Computer objects** |
-| Object Scope | Check **Create selected objects in this folder** and **Delete selected objects in this folder** |
-| Permissions | Read, Write, Create All Child Objects, Delete All Child Objects |
-
-Click **Next** and **Finish** to apply the delegation.
-
-> This grants members of `NetAdmins` the ability to join computers to the domain without requiring Domain Admin credentials — a principle of least privilege applied to a common administrative task.
-
----
-
-#### Step 4 — Rejoin the File Server to the Domain
-
-Return to the **File Server** tab. Navigate to:
-
-```
-Start → Server Manager → Local Server → WORKGROUP → Change...
-```
-
-Select **Domain** and enter:
-
-```
-globomantics.co
-```
-
-Click **OK**. When prompted for credentials
-
-
-The **Welcome to the globomantics.co domain** confirmation message confirms the join succeeded using the non-admin `C.McCann` account — validating the delegation configured in the previous step.
-
-Click **OK**, then **Restart Now** to complete the domain join.
+- Managing Active Directory users, groups, and Organizational Units (OUs)  
+- Automating account provisioning using `PowerShell` and the `ActiveDirectory` module  
+- Executing directory queries using `Get-ADUser` for account enumeration  
+- Creating and modifying user objects using `New-ADUser` and `Set-ADUser`  
+- Managing group membership using `Add-ADGroupMember`  
+- Performing domain join and unjoin operations in Windows Server environments  
+- Implementing delegated administration using the `Delegation of Control Wizard`  
 
 ---
 
 ## 🔍 Results
-
-- Organizational Unit `Globomantics` created under `globomantics.co` with accidental deletion protection disabled for lab flexibility
-- Security groups `NetAdmins` and `AllUsers` created within the Globomantics OU
-- User `Marina Ortega` (`M.Ortega`) created via ADUC and added as a member of `AllUsers`; existing user `mcauthon` moved from the default Users container to the Globomantics OU
-- `Get-ADUser -Filter *` returned a full enumeration of all domain accounts, confirming PowerShell AD module availability and domain connectivity
-- User `Casey McCann` (`C.McCann`) created via `New-ADUser` in the Globomantics OU and added to `NetAdmins` via `Add-ADGroupMember`
-- File Server (FS01) successfully unjoined from `globomantics.co`, stale computer object removed from AD Computers container
-- Delegation of Control Wizard applied to `globomantics.co` — `NetAdmins` granted scoped Computer object permissions (Read, Write, Create, Delete)
-- File Server successfully rejoined `globomantics.co` using `C.McCann` credentials, confirming the delegation granted the correct permissions without Domain Admin rights
-
----
-
-## 📸 Evidence
-
-| Description | Screenshot |
-|------------|------------|
-| ADUC showing Globomantics OU with users and groups | null |
-| New User wizard — Marina Ortega account creation | null |
-| AllUsers group Members tab showing Marina Ortega | null |
-| PowerShell — `Get-ADUser` enumeration output | null |
-| PowerShell — `New-ADUser` command for Casey McCann | null |
-| PowerShell — `Add-ADGroupMember` command output | null |
-| ADUC Computers container — FS01 object before deletion | null |
-| Delegation of Control Wizard — permissions summary screen | null |
-| File Server domain join success dialog (globomantics.co) | null |
+- Successfully created and structured the `Globomantics` Organizational Unit within Active Directory, establishing a dedicated environment for user and group management
+- Security groups `NetAdmins` and `AllUsers` were created and validated for role-based access control implementation
+- User accounts were successfully provisioned using both `Active Directory Users and Computers (ADUC)` and `PowerShell`, confirming multi-method administrative capability
+- PowerShell-based user enumeration using `Get-ADUser` and account creation using `New-ADUser` confirmed proper configuration and functionality of the `ActiveDirectory` module
+- Group membership assignments were successfully applied using `Add-ADGroupMember`, validating the enforcement of access control through security groups
+- A Windows Server was successfully unjoined from the domain, and stale computer objects were removed from the `Active Directory Computers` container to maintain directory hygiene
+- Delegation of Control was successfully configured using the `Delegation of Control Wizard`, granting scoped administrative permissions to NetAdmins following the principle of least privilege
+- The server was successfully rejoined to the `globomantics.co` domain using delegated credentials, validating correct permission scoping and authentication workflow
 
 ---
 
 ## 🛡️ Security Analysis / Key Takeaways
 
-**Organizational Structure (OUs)**  
-Active Directory environments rely on proper organizational structure and controlled administrative access. Organizational Units (OUs) provide a way to logically separate users, groups, and systems while also defining the scope for Group Policy application and delegated administration. Proper OU design reduces unnecessary exposure of privileges and improves administrative efficiency.
+- Organizational Units (OUs) define administrative boundaries within Active Directory, enabling structured delegation and controlled policy application across identity resources  
 
-**Delegation & Least Privilege**  
-Delegated permissions provide a more secure alternative to assigning broad Domain Admin rights. Limiting access to only required tasks, such as joining and removing systems from the domain, supports the principle of least privilege while maintaining operational efficiency.
+- Delegation of Control and least privilege principles reduce reliance on Domain Admin accounts by limiting permissions to only required administrative actions, such as computer object management  
 
-**PowerShell Automation**  
-PowerShell improves consistency and reduces manual error through repeatable account provisioning workflows. Cmdlets such as `New-ADUser` and `Add-ADGroupMember` allow administrative tasks to be scripted, reviewed, and reused across environments.
+- PowerShell automation improves consistency and reduces manual error in identity and access management workflows through repeatable cmdlets such as `New-ADUser`, `Set-ADUser`, and `Add-ADGroupMember`  
 
-**Lifecycle & Cleanup**  
-Computer objects may remain in Active Directory after systems are removed from the domain, creating stale entries. Regular auditing and cleanup of unused objects is important for maintaining a secure and accurate directory environment.
+- Active Directory account and computer lifecycle management is essential for maintaining directory hygiene, reducing stale objects, and minimizing unnecessary attack surface exposure after system changes or removals  
 
+---
+## 📸 Evidence
+
+| Description | Evidence |
+|------------|----------|
+| Active Directory Users and Computers (ADUC) showing `Globomantics` OU with users and groups | *(Insert screenshot)* |
+| User creation for `Marina Ortega` via ADUC | *(Insert screenshot)* |
+| `AllUsers` group membership showing `M.Ortega` added | *(Insert screenshot)* |
+| PowerShell output for `Get-ADUser` enumeration | *(Insert screenshot)* |
+| PowerShell execution of `New-ADUser` for `Casey McCann` | *(Insert screenshot)* |
+| `Add-ADGroupMember` confirming assignment to `NetAdmins` | *(Insert screenshot)* |
+| AD `Computers` container showing `FS01` before removal | *(Insert screenshot)* |
+| Delegation of Control Wizard showing permissions for `NetAdmins` | *(Insert screenshot)* |
+| Domain join confirmation for `globomantics.co` using delegated credentials | *(Insert screenshot)* |
 
 ---
 
 ## 🧠 MITRE ATT&CK Mapping
 
-| ID | Tactic / Technique | How it Appears in This Lab |
-|---|---|---|
-| TA0001 | Initial Access | Domain authentication and access workflows |
-| TA0003 | Persistence | Active Directory account creation and management |
-| TA0004 | Privilege Escalation | Delegated administrative permissions |
-| TA0006 | Credential Access | User credential and password management |
-| TA0007 | Discovery | Enumeration of domain users using PowerShell |
+| Technique ID | Technique Name | Relevance |
+|-------------|---------------|-----------|
+| `T1087.002` | Account Discovery: Domain Account | Enumeration of domain user accounts can be used to identify valid identities within Active Directory for reconnaissance purposes |
+| `T1136.002` | Create Account: Domain Account | Domain account creation represents lifecycle management activity that can be abused if performed by unauthorized or compromised privileged users |
+| `T1069.002` | Permission Groups Discovery: Domain Groups | Discovery and management of security groups provides visibility into privileged roles and access structure within the domain |
+| `T1098` | Account Manipulation | Modification of user attributes and group membership reflects administrative control over identity and access, which is a key area for privilege abuse monitoring |
 
 ---
 
+## 💼 Resume Bullets
 
-🛠️ Skills Gained
-Active Directory Administration
-Windows Server Management
-PowerShell Automation
-User and Group Management
-Domain Join Troubleshooting
-Role-Based Access Control
-Identity & Access Management
-Organizational Unit Design
-Delegated Administration
-
-💼 Resume Bullets
 Completed hands-on Active Directory administration lab using Windows Server and PowerShell
 Managed users, groups, Organizational Units, and delegated domain permissions
 Automated Active Directory account provisioning using PowerShell cmdlets
