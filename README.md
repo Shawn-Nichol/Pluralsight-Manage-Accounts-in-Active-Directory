@@ -86,12 +86,19 @@ The primary objectives of this lab were to gain practical experience with Active
 
 ## 🔍 Results
 - Successfully created and structured the `Globomantics` Organizational Unit within Active Directory, establishing a dedicated environment for user and group management
+
 - Security groups `NetAdmins` and `AllUsers` were created and validated for role-based access control implementation
+
 - User accounts were successfully provisioned using both `Active Directory Users and Computers (ADUC)` and `PowerShell`, confirming multi-method administrative capability
+
 - PowerShell-based user enumeration using `Get-ADUser` and account creation using `New-ADUser` confirmed proper configuration and functionality of the `ActiveDirectory` module
+
 - Group membership assignments were successfully applied using `Add-ADGroupMember`, validating the enforcement of access control through security groups
+
 - A Windows Server was successfully unjoined from the domain, and stale computer objects were removed from the `Active Directory Computers` container to maintain directory hygiene
+
 - Delegation of Control was successfully configured using the `Delegation of Control Wizard`, granting scoped administrative permissions to NetAdmins following the principle of least privilege
+
 - The server was successfully rejoined to the `globomantics.co` domain using delegated credentials, validating correct permission scoping and authentication workflow
 
 ---
@@ -142,7 +149,7 @@ Automated Active Directory account provisioning using PowerShell cmdlets
 Performed domain join and unjoin operations using delegated administrative access
 Documented enterprise-style Windows administration procedures and outcomes
 
-
+---
 ## 📎 References
 
 - [Pluralsight — Manage Accounts in Active Directory (Lab)](https://app.pluralsight.com/hands-on/labs/e199a271-5764-4256-b654-c9dfda2638c7)
@@ -151,6 +158,8 @@ Documented enterprise-style Windows administration procedures and outcomes
 - [Microsoft Docs — New-ADUser Cmdlet](https://learn.microsoft.com/en-us/powershell/module/activedirectory/new-aduser)
 - [MITRE ATT&CK — T1136.002 Create Account: Domain Account](https://attack.mitre.org/techniques/T1136/002/)
 - [MITRE ATT&CK — T1087.002 Account Discovery: Domain Account](https://attack.mitre.org/techniques/T1087/002/)
+
+---
 
 👤 About Me
 
