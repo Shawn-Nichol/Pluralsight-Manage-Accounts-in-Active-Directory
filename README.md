@@ -115,18 +115,16 @@ The primary objectives of this lab were to gain practical experience with Active
 
 ---
 ## 📸 Evidence
-
 | Description | Evidence |
 |------------|----------|
-| Active Directory Users and Computers (ADUC) showing `Globomantics` OU with users and groups | *(Insert screenshot)* |
-| User creation for `Marina Ortega` via ADUC | *(Insert screenshot)* |
-| `AllUsers` group membership showing `M.Ortega` added | *(Insert screenshot)* |
-| PowerShell output for `Get-ADUser` enumeration | *(Insert screenshot)* |
-| PowerShell execution of `New-ADUser` for `Casey McCann` | *(Insert screenshot)* |
-| `Add-ADGroupMember` confirming assignment to `NetAdmins` | *(Insert screenshot)* |
-| AD `Computers` container showing `FS01` before removal | *(Insert screenshot)* |
-| Delegation of Control Wizard showing permissions for `NetAdmins` | *(Insert screenshot)* |
-| Domain join confirmation for `globomantics.co` using delegated credentials | *(Insert screenshot)* |
+| Active Directory Users and Computers (ADUC) showing `Globomantics` OU with user groups | ![ADUC Globomantics OU](images/1.11%20ADUC%20Globomantics%20OU%20with%20User%20group.png) |
+| User creation for `Marina Ortega` via ADUC | ![Marina Ortega User Creation](images/1.12%20User%20creation%20Marina%20Ortega.png) |
+| `Globomantics` OU showing user successfully added | ![User Added to OU](images/1.16%20Globomantics%20OU%20user%20added.png) |
+| PowerShell output for `Get-ADUser` enumeration | ![Get-ADUser Output](images/2.3%20PowerShell%20Get-ADUSER.png) |
+| PowerShell execution for user creation of `Casey McCann` | ![New AD User Casey McCann](images/2.4%20PowerShell%20Add%20user%20Casey%20McCann.png) |
+| PowerShell user configuration steps (`New-ADUser`, `Set-ADUser`, `Add-ADGroupMember`) | ![PowerShell User Configuration](images/2.5%20to%202.7%20PowerShell%20User%20configurations.png) |
+| File Server `FS01` confirmed as part of the domain | ![FS01 Domain Join](images/3.4%20FS01%20part%20of%20the%20domain.png) |
+| File Server `FS01` successfully moved to workgroup (domain removal) | ![FS01 Workgroup](images/3.6%20FS01%20moved%20to%20workgroup.png) |
 
 ---
 
