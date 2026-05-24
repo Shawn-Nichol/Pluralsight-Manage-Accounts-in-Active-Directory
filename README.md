@@ -1,6 +1,7 @@
 # 📌 Manage Accounts in Active Directory
-
----
+<p align="center">
+  <img src="Lab%20cover%20photo.png" width="525"/>
+</p>
 
 ## 📘 Overview
 
